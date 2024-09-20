@@ -11,10 +11,15 @@ import ReactDOM from 'react-dom'
 function createDataProvider(fieldName: string) {
   return (item: Zotero.Item, dataKey: string) => {
     const extra = item.getField('extra') || '';
-    const line = extra.split('\n').find(line => line.startsWith(`${fieldName}:`));
-    return line ? line.substring(`${fieldName}:`.length).trim() : '';
+    
+    // Handle complex fields like Methodology, Discussion, and ResultsFindings
+    const regex = new RegExp(`^${fieldName}.*?:\\s*(.*?)$`, 'm');
+    const match = extra.match(regex);
+    
+    return match ? match[1].trim() : '';
   };
 }
+
 
 
 export class ReactRoot {
@@ -42,6 +47,9 @@ export class ReactRoot {
     this.SummaryColumn()
     this.AnswerColumn()
     this.StepsColumn()
+    this.MethodologyColumn()
+    this.DiscussionColumn()
+    this.ResultsFindingsColumn() 
     
     // As message entries are no longer stored in preferences (due to the size limit), we need to remove the existing entries. This may be removed after several upgrade cycles.
     this.removeMessagesInPrefs()
@@ -112,18 +120,51 @@ export class ReactRoot {
       dataProvider: createDataProvider('Objective'),
     });
   }
-  
+
   private async OverviewColumn() {
     const field = "Overview";
     await Zotero.ItemTreeManager.registerColumns({
       pluginID: config.addonID,
       dataKey: field,
       label: "Overview",      
-      flex: 0,     
+      flex: 0,      
       dataProvider: createDataProvider('Overview'),
     });
   }
   
+  private async MethodologyColumn() {
+    const field = "Methodology: Overview";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Methodology",
+      flex: 0,
+      dataProvider: createDataProvider('Methodology: Overview'),
+    });
+  }
+   
+  private async DiscussionColumn() {
+    const field = "Discussion: Main Points";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Discussion",
+      flex: 0,
+      dataProvider: createDataProvider('Discussion: Main Points'),
+    });
+  }
+
+  private async ResultsFindingsColumn() {
+    const field = "ResultsFindings: Summary";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Results/Findings",
+      flex: 0,
+      dataProvider: createDataProvider('ResultsFindings: Summary'),
+    });
+  }
+
   private async RelationshipsColumn() {
     const field = "Relationships";
     await Zotero.ItemTreeManager.registerColumns({
