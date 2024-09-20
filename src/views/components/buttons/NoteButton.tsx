@@ -46,102 +46,79 @@ export function NoteButton({ utils, input, states }: NoteButtonProps) {
   
   async function saveAnswerToColumn(itemId: number) {
     try {
-      // Assuming 'input' is your AI output object
-      const data = input; // Ensure 'input' is an object
-      console.log('Data:', data);
-  
+      const data = input; // Assuming 'input' is your AI output object
       const answerText = data.answer; // Get the 'answer' field
-      console.log('Answer Text:', answerText);
-  
-      // Function to extract sections based on '**SectionTitle:**' pattern
-      function extractSection(text: string | undefined, sectionTitle: string) {
-        const regex = new RegExp(`####\\s+${sectionTitle}\\s+([\\s\\S]*?)(?=\\n####|$)`, 'i');
-        const match = text ? text.match(regex) : null;
+      
+      // Function to extract the content of each field from the table format
+      function extractFromTable(text: string | undefined, fieldName: string) {
+        const regex = new RegExp(`\\|\\s*${fieldName}\\s*\\|\\s*([\\s\\S]*?)\\s*\\|`, 'i');
+        const match = (text ?? '').match(regex);
         return match ? match[1].trim() : null;
       }
   
-      // Extract sections
-      const objective = extractSection(answerText, 'Objective');
-      const methodology = extractSection(answerText, 'Methodology');
-      const discussion = extractSection(answerText, 'Discussion');
-      const resultsFindings = extractSection(answerText, 'Results/Findings');
+      // Extract specific fields from the table
+      const title = extractFromTable(answerText, 'Title');
+      const author = extractFromTable(answerText, 'Author');
+      const year = extractFromTable(answerText, 'Year');
+      const objective = extractFromTable(answerText, 'Objective');
+      const methodology = extractFromTable(answerText, 'Methodology');
+      const steps = extractFromTable(answerText, 'Steps');
+      const discussion = extractFromTable(answerText, 'Discussion');
+      const resultsFindings = extractFromTable(answerText, 'Results/Findings');
+      const dataPoints = extractFromTable(answerText, 'Data Points');
+      const relationships = extractFromTable(answerText, 'Relationships');
   
-      // Now, within 'Methodology', we may have sub-sections
-      let overview = null;
-      let details = null;
-      if (methodology) {
-        const overviewMatch = methodology.match(/- \*\*Overview:\*\*\s*([\s\S]*?)(?=\n- \*\*|$)/i);
-        overview = overviewMatch ? overviewMatch[1].trim() : null;
+      // Log each field to debug
+      console.log('Title:', title);
+      console.log('Author:', author);
+      console.log('Year:', year);
+      console.log('Objective:', objective);
+      console.log('Methodology:', methodology);
+      console.log('Steps:', steps);
+      console.log('Discussion:', discussion);
+      console.log('ResultsFindings:', resultsFindings);
+      console.log('DataPoints:', dataPoints);
+      console.log('Relationships:', relationships);
   
-        const detailsMatch = methodology.match(/- \*\*Details:\*\*\s*([\s\S]*?)(?=\n####|$)/i);
-        details = detailsMatch ? detailsMatch[1].trim() : null;
-      }
-  
-      // Extract 'Main Points' and 'Implications' from 'Discussion'
-      let mainPoints = null;
-      let implications = null;
-      if (discussion) {
-        const mainPointsMatch = discussion.match(/- \*\*Main Points:\*\*\s+([\s\S]*?)(?=\n- \*\*|$)/);
-        mainPoints = mainPointsMatch ? mainPointsMatch[1].trim() : null;
-  
-        const implicationsMatch = discussion.match(/- \*\*Implications:\*\*\s+([\s\S]*?)(?=\n####|$)/);
-        implications = implicationsMatch ? implicationsMatch[1].trim() : null;
-      }
-  
-      // Extract 'Summary', 'Data Points', 'Relationships' from 'Results/Findings'
-      let summary = null;
-      let dataPoints = null;
-      let relationships = null;
-      if (resultsFindings) {
-        const summaryMatch = resultsFindings.match(/- \*\*Summary:\*\*\s+([\s\S]*?)(?=\n- \*\*|$)/);
-        summary = summaryMatch ? summaryMatch[1].trim() : null;
-  
-        const dataPointsMatch = resultsFindings.match(/- \*\*Data Points:\*\*\s+([\s\S]*?)(?=\n- \*\*|$)/);
-        dataPoints = dataPointsMatch ? dataPointsMatch[1].trim() : null;
-  
-        const relationshipsMatch = resultsFindings.match(/- \*\*Relationships:\*\*\s+([\s\S]*?)(?=\n####|$)/);
-        relationships = relationshipsMatch ? relationshipsMatch[1].trim() : null;
-      }
-  
-      // Fetch the item and its current 'extra' field
+      // Fetch the Zotero item and its current 'extra' field
       const item = await Zotero.Items.getAsync(itemId);
       let extra = item.getField('extra') || '';
   
-      // Remove existing custom fields to prevent duplicates
+      // Remove existing custom fields from the extra field to prevent duplicates
       extra = extra
         .split('\n')
         .filter(line => !line.startsWith('Answer Text:') &&
                         !line.startsWith('Objective:') &&
-                        !line.startsWith('Overview:') &&
-                        !line.startsWith('Details:') &&
-                        !line.startsWith('MainPoints:') &&
-                        !line.startsWith('Summary:') &&
+                        !line.startsWith('Methodology:') &&
+                        !line.startsWith('Steps:') &&
+                        !line.startsWith('Discussion:') &&
+                        !line.startsWith('ResultsFindings:') &&
                         !line.startsWith('DataPoints:') &&
-                        !line.startsWith('Implications:') &&
                         !line.startsWith('Relationships:'))
         .join('\n');
   
-      // Append new data
-      if (answerText) extra += `\nAnswer Text: ${answerText}`;
+      // Append new extracted data to the extra field
+      if (title) extra += `\nTitle: ${title}`;
+      if (author) extra += `\nAuthor: ${author}`;
+      if (year) extra += `\nYear: ${year}`;
       if (objective) extra += `\nObjective: ${objective}`;
-      if (overview) extra += `\nOverview: ${overview}`;
-      if (details) extra += `\nDetails: ${details}`;
-      if (mainPoints) extra += `\nMainPoints: ${mainPoints}`;
-      if (summary) extra += `\nSummary: ${summary}`;
+      if (methodology) extra += `\nMethodology: ${methodology}`;
+      if (steps) extra += `\nSteps: ${steps}`;
+      if (discussion) extra += `\nDiscussion: ${discussion}`;
+      if (resultsFindings) extra += `\nResultsFindings: ${resultsFindings}`;
       if (dataPoints) extra += `\nDataPoints: ${dataPoints}`;
-      if (implications) extra += `\nImplications: ${implications}`;
       if (relationships) extra += `\nRelationships: ${relationships}`;
   
-      // Update the 'extra' field
+      // Update the 'extra' field in the Zotero item
       item.setField('extra', extra.trim());
       await item.saveTx();
   
+      // Optionally, focus the updated item
       ZoteroPane.selectItem(itemId);
     } catch (error) {
-      console.error('Failed to parse input string', error);
+      console.error('Failed to parse and save input string', error);
     }
   }
-  
   
   
 
