@@ -1,3 +1,4 @@
+
 import { BasicTool, BasicOptions } from 'zotero-plugin-toolkit/dist/basic'
 import { ManagerTool } from 'zotero-plugin-toolkit/dist/basic'
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui'
@@ -6,6 +7,15 @@ import { Providers } from './Providers'
 import { config } from '../../package.json'
 import React from 'react'
 import ReactDOM from 'react-dom'
+
+function createDataProvider(fieldName: string) {
+  return (item: Zotero.Item, dataKey: string) => {
+    const extra = item.getField('extra') || '';
+    const line = extra.split('\n').find(line => line.startsWith(`${fieldName}:`));
+    return line ? line.substring(`${fieldName}:`.length).trim() : '';
+  };
+}
+
 
 export class ReactRoot {
   private ui: UITool
@@ -22,6 +32,17 @@ export class ReactRoot {
     this.registerStyle()
     this.registerToolbar()
     this.registerShortcut()
+    this.ObjectiveColumn()
+    this.OverviewColumn()
+    //this.DetailsColumn()
+    this.MainPointsColumn()
+    this.ImplicationsColumn()
+    this.DataPointsColumn()
+    this.RelationshipsColumn()
+    this.SummaryColumn()
+    this.AnswerColumn()
+    this.StepsColumn()
+    
     // As message entries are no longer stored in preferences (due to the size limit), we need to remove the existing entries. This may be removed after several upgrade cycles.
     this.removeMessagesInPrefs()
   }
@@ -31,7 +52,7 @@ export class ReactRoot {
       properties: {
         type: 'text/css',
         rel: 'stylesheet',
-        href: `chrome://${config.addonRef}/content/scripts/index.css`,
+        href: `chrome://${config.addonRef}/content/scripts/${config.addonRef}.css`,
       },
     })
     this.document.documentElement.appendChild(styles)
@@ -50,18 +71,125 @@ export class ReactRoot {
         {
           type: 'click',
           listener: () => {
-            if (!this.dialog) {
+            if (this.dialog && !this.dialog.closed) {
+              this.dialog.focus()
+            } else {
               this.launchApp()
             }
           },
         },
       ],
     })
-    const toolbarNode = this.document.getElementById('zotero-tb-advanced-search')
+    const toolbarNode = this.document.getElementById('zotero-tb-note-add')
     if (toolbarNode) {
       toolbarNode.after(ariaBtn)
     }
   }
+
+
+  
+  private async AnswerColumn() {
+    const field = "Answer ";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Answer",      
+      flex: 0, 
+      dataProvider: (item: Zotero.Item, dataKey: string) => {
+        return item.getField('extra').split('\n').find(line => line.startsWith('Answer:'))?.split(': ')[1] || '';
+    },
+      
+    });
+  }
+
+  private async ObjectiveColumn() {
+    const field = "Objective";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Objective",      
+      flex: 0,      
+      dataProvider: createDataProvider('Objective'),
+    });
+  }
+  
+  private async OverviewColumn() {
+    const field = "Overview";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Overview",      
+      flex: 0,     
+      dataProvider: createDataProvider('Overview'),
+    });
+  }
+  
+  private async RelationshipsColumn() {
+    const field = "Relationships";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Relationships",      
+      flex: 0,      
+      dataProvider: createDataProvider('Relationships'),
+    });
+  }
+
+  private async StepsColumn() {
+    const field = "Steps";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Steps",      
+      flex: 0,      
+      dataProvider: createDataProvider('Steps'),
+    });
+  }
+  
+  private async MainPointsColumn() {
+    const field = "MainPoints";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "MainPoints",      
+      flex: 0,      
+      dataProvider: createDataProvider('MainPoints'),
+    });
+  }
+  
+  private async SummaryColumn() {
+    const field = "Summary";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Summary",      
+      flex: 0,      
+      dataProvider: createDataProvider('Summary'),
+    });
+  }
+  
+  private async DataPointsColumn() {
+    const field = "DataPoints";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "DataPoints",      
+      flex: 0,      
+      dataProvider: createDataProvider('DataPoints'),
+    });
+  }
+  
+  private async ImplicationsColumn() {
+    const field = "Implications";
+    await Zotero.ItemTreeManager.registerColumns({
+      pluginID: config.addonID,
+      dataKey: field,
+      label: "Implications",      
+      flex: 0, 
+      dataProvider: createDataProvider('Implications'),
+    });
+  }
+  
 
   private removeMessagesInPrefs() {
     try {
@@ -88,8 +216,8 @@ export class ReactRoot {
     const left = window.screenX + window.outerWidth / 2 - dialogWidth / 2
     const top = window.screenY + window.outerHeight / 2 - dialogHeight / 2
     const dialog = (window as any).openDialog(
-      'chrome://aria/content/popup.xul',
-      `${config.addonRef}-aria`,
+      'chrome://aria/content/popup.xhtml',
+      `${config.addonRef}-window`,
       `chrome,titlebar,status,width=${dialogWidth},height=${dialogHeight},left=${left},top=${top},resizable=yes`,
       windowArgs
     )
@@ -123,7 +251,7 @@ export class ReactRoot {
       modifiers: (Zotero.Prefs.get(`${config.addonRef}.SHORTCUT_MODIFIER`) as string) || 'shift',
       key: (Zotero.Prefs.get(`${config.addonRef}.SHORTCUT_KEY`) as string) || 'r',
       callback: event => {
-        if (this.dialog) {
+        if (this.dialog && !this.dialog.closed) {
           this.dialog.focus()
         } else {
           this.launchApp()
