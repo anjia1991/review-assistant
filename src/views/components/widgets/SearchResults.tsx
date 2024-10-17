@@ -15,7 +15,7 @@ import { ItemButton } from '../item/ItemButton'
 import { createCollection } from '../../../apis/zotero/collection'
 import { ARIA_LIBRARY } from '../../../constants'
 import { config } from '../../../../package.json'
-import { copyButtonDef, noteButtonDef } from '../buttons/types'
+import { copyButtonDef, exportButtonDef, noteButtonDef } from '../buttons/types'
 import { DEFAULT_BIB_STYLE } from '../../../constants'
 
 interface SearchResult {
