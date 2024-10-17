@@ -321,4 +321,8 @@ export const buttonDefs = [
     name: 'NOTE',
     utils: { createNote },
   } as noteButtonDef,
+  {
+    name: 'EXPORT',
+    utils: { exportCSV: async () => '' },
+  } as exportButtonDef,
 ]

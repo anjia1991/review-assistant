@@ -18,3 +18,10 @@ export interface annotationButtonDef {
     createAnnotation: (props: any) => string
   }
 }
+
+export interface exportButtonDef {
+  name: 'EXPORT'
+  utils: {
+    exportCSV: (props: any) => Promise<string>
+  }
+}

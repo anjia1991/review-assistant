@@ -18,6 +18,7 @@ import { anonymizeError } from '../../../models/utils/error'
 import { CopyButton } from '../buttons/CopyButton'
 import { NoteButton } from '../buttons/NoteButton'
 import { AnnotateButton } from '../buttons/AnnotateButton'
+import { ExportButton } from '../buttons/ExportButton'
 
 const widgetMap = {
   MARKDOWN: Markdown,
@@ -87,6 +88,9 @@ function MessageActions({ id, widget, input, copyId, setCopyId, states }: Messag
             }
             case 'ANNOTATION': {
               return <AnnotateButton key={index} name={name} utils={utils} input={input} states={states} />
+            }
+            case 'EXPORT': {
+              return <ExportButton key={index} name={name} utils={utils} input={input} states={states} />
             }
             default: {
               return null

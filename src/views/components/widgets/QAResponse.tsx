@@ -6,7 +6,7 @@ import { ItemButton } from '../item/ItemButton'
 import { createCollection } from '../../../apis/zotero/collection'
 import { ARIA_LIBRARY } from '../../../constants'
 import { config } from '../../../../package.json'
-import { annotationButtonDef, copyButtonDef, noteButtonDef } from '../buttons/types'
+import { annotationButtonDef, copyButtonDef, noteButtonDef, exportButtonDef } from '../buttons/types'
 
 export interface Props {
   answer: string
@@ -111,4 +111,8 @@ export const buttonDefs = [
     name: 'NOTE',
     utils: { createNote },
   } as noteButtonDef,
+  {
+    name: 'EXPORT',
+    utils: { exportCSV: async () => '' },
+  } as exportButtonDef,
 ]

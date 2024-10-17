@@ -2,7 +2,7 @@ import React from 'react'
 import MarkdownReact from 'marked-react'
 import { marked } from 'marked'
 import { config } from '../../../../package.json'
-import { annotationButtonDef, copyButtonDef, noteButtonDef } from '../buttons/types'
+import { annotationButtonDef, copyButtonDef, noteButtonDef, exportButtonDef } from '../buttons/types'
 export interface Props {
   content: string
 }
@@ -63,4 +63,8 @@ export const buttonDefs = [
     name: 'ANNOTATION',
     utils: { createAnnotation },
   } as annotationButtonDef,
+  {
+    name: 'EXPORT',
+    utils: { exportCSV: async () => '' },
+  } as exportButtonDef,
 ]
