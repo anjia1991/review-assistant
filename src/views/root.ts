@@ -7,6 +7,18 @@ import { config } from '../../package.json'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+// function createDataProvider(fieldName: string) {
+//   return (item: Zotero.Item, dataKey: string) => {
+//     const extra = item.getField('extra') || '';
+    
+//     // Handle complex fields like Methodology, Discussion, and ResultsFindings
+//     const regex = new RegExp(`^${fieldName}.*?:\\s*(.*?)$`, 'm');
+//     const match = extra.match(regex);
+    
+//     return match ? match[1].trim() : '';
+//   };
+// }
+
 export class ReactRoot {
   private ui: UITool
   private base: BasicTool
@@ -22,6 +34,7 @@ export class ReactRoot {
     this.registerStyle()
     this.registerToolbar()
     this.registerShortcut()
+    // this.registerCustomColumns()
     // As message entries are no longer stored in preferences (due to the size limit), we need to remove the existing entries. This may be removed after several upgrade cycles.
     this.removeMessagesInPrefs()
   }
@@ -64,6 +77,60 @@ export class ReactRoot {
       toolbarNode.after(ariaBtn)
     }
   }
+
+//   private async registerCustomColumns() {
+//     await Zotero.ItemTreeManager.registerColumns([
+//         {
+//             dataKey: 'Objective',
+//             label: 'Objective',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Objective')
+//         },
+//         {
+//             dataKey: 'Methodology', // Fixed to match "Methodology" directly in extra field
+//             label: 'Methodology',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Methodology')
+//         },
+//         {
+//             dataKey: 'Discussion',  // Fixed to match "Discussion" directly
+//             label: 'Discussion',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Discussion')
+//         },
+//         {
+//             dataKey: 'ResultsFindings',  // Fixed to match "ResultsFindings" directly
+//             label: 'Results/Findings',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('ResultsFindings')
+//         },
+//         {
+//             dataKey: 'DataPoints',  // Fixed to match "DataPoints" directly
+//             label: 'DataPoints',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Data Points')
+//         },
+//         {
+//             dataKey: 'Implications',
+//             label: 'Implications',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Implications')
+//         },
+//         {
+//             dataKey: 'Relationships',
+//             label: 'Relationships',
+//             pluginID: config.addonID,
+//             flex: 0,
+//             dataProvider: createDataProvider('Relationships')
+//         }
+//     ]);
+// }
 
   private removeMessagesInPrefs() {
     try {
