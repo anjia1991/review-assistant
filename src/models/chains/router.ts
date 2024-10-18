@@ -21,16 +21,21 @@ import { OutputActionParser } from '../utils/parsers'
 import { serializeStates } from '../utils/states'
 
 const OPENAI_API_KEY = (Zotero.Prefs.get(`${config.addonRef}.OPENAI_API_KEY`) as string) || 'YOUR_OPENAI_API_KEY'
-const OPENAI_MODEL = (Zotero.Prefs.get(`${config.addonRef}.OPENAI_MODEL`) as string) || 'gpt-4o'
-const OPENAI_BASE_URL =
-  (Zotero.Prefs.get(`${config.addonRef}.OPENAI_BASE_URL`) as string) || 'https://api.openai.com/v1'
-const llm = new ChatOpenAI({
-  temperature: 0,
-  openAIApiKey: OPENAI_API_KEY,
-  modelName: OPENAI_MODEL,
-  configuration: {
+  const OPENAI_MODEL = (Zotero.Prefs.get(`${config.addonRef}.OPENAI_MODEL`) as string) || 'gpt-4o'
+  const OPENAI_BASE_URL =
+    (Zotero.Prefs.get(`${config.addonRef}.OPENAI_BASE_URL`) as string) || 'https://api.openai.com/v1'
+  const OPENAI_TEMPERATURE = parseFloat(Zotero.Prefs.get(`${config.addonRef}.OPENAI_TEMPERATURE`) as string) || 0.2;  // Default to 0.2 if not set
+  const OPENAI_TOP_P = parseFloat(Zotero.Prefs.get(`${config.addonRef}.OPENAI_TOP_P`) as string) || 0.1;  // Default to 0.1 if not set
+  //console.log('Temperature:', OPENAI_TEMPERATURE);
+  //console.log('Top P:', OPENAI_TOP_P);
+  const llm = new ChatOpenAI({
+    temperature: OPENAI_TEMPERATURE,
+    topP: OPENAI_TOP_P,
+    openAIApiKey: OPENAI_API_KEY,
+    modelName: OPENAI_MODEL,
+    configuration: {
     baseURL: OPENAI_BASE_URL,
-  },
+    },
 })
 
 export interface Routes {

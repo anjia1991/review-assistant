@@ -13,4 +13,6 @@ aria-pref-feedback-submission = Feedback Submission
 aria-pref-feedback-no-confirmation = 
     .label = Submit feedback directly without an additional popup for confirmation
 aria-pref-user-email = User Email
+aria-pref-openai-temperature = OpenAI Temperature
+aria-pref-openai-top-p = OpenAI top_p
 aria-pref-help = { $name } Build { $version } ({ $time })

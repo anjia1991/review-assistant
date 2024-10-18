@@ -14,4 +14,6 @@ aria-pref-feedback-submission = 反馈提交
 aria-pref-feedback-no-confirmation = 
     ,label = 直接提交反馈，无需额外的确认弹窗
 aria-pref-user-email = 用户邮箱
+aria-pref-openai-temperature = OpenAI Temperature 值
+aria-pref-openai-top-p = OpenAI top_p 值
 aria-pref-help = { $name } 版本 { $version } ({ $time })
