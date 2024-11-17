@@ -57,6 +57,8 @@ The generated `.xpi` file in the build directory is the extension that you can i
 
 ### Exporting CSV file for JSON prompt answer
 
+You can design a JSON format prompt to ask about certain information about an item/items, and with the 'Export CSV' button, you can export the answer with a CSV file with your designed JSON prompt as headers. 
+
 ![Export Button](assets/screenshots/export-button.png)
 
 #### Provide a JSON prompt
