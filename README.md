@@ -17,7 +17,7 @@ git clone -b zotero-7 https://github.com/zhiruiw1/ai-research-assistant/
 ```
 Go to the directory and build the project
 ```bash
-cd zotero-gpt
+cd ai-research-assistant/
 npm install
 npm run build
 ```
