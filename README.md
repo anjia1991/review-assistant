@@ -26,25 +26,25 @@ npm run build
 
 The generated `.xpi` file in the build directory is the extension that you can install in Zotero.
 
-Go to 'Tool' tab
-![Tool tab](assets/screenshots/Tool_tab.png)
+#### Go to 'Tool' tab
+![Tool tab](assets/screenshots/Tool-tab.png)
 
-Select 'Plugin' tab
+#### Select 'Plugin' tab
 ![Plugin tab](assets/screenshots/Plugin-tab.png)
 
-Click on 'Setting'
+#### Click on 'Setting'
 ![Setting](assets/screenshots/Plugin-setting.png)
 
-Select 'Install Plugin From File...'
+#### Select 'Install Plugin From File...'
 ![Setting](assets/screenshots/install-plugin.png)
 
-Allocate 'build' folder
+#### Allocate 'build' folder
 ![Build folder](assets/screenshots/build-folder.png)
 
-Select 'aria.xpi' file
+#### Select 'aria.xpi' file
 ![aria xpi](assets/screenshots/select-file.png)
 
-Plugin installed
+#### Plugin installed
 ![aria installed](assets/screenshots/installed.png)
 
 ## Quickstart
