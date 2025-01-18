@@ -64,26 +64,34 @@ export function ExportButton({ utils, input, states }: ExportButtonProps) {
 
   async function parseJSONData() {
     try {
-      if (input.answer) {
-        const jsonData = JSON.parse(input.answer);
-        // Adjust if jsonData is an object with an array property
-        if (jsonData.articles && Array.isArray(jsonData.articles)) {
-          return jsonData.articles;
-        } else if (Array.isArray(jsonData)) {
-          return jsonData;
-        } else {
-          console.error('Parsed data is not an array.');
-          return [];
-        }
-      } else {
+      if (!input.answer) {
         console.error('No input data to parse.');
         return [];
       }
+      const jsonData = JSON.parse(input.answer);
+  
+      // If there's an "articles" property and it's an array, return that
+      if (jsonData.articles && Array.isArray(jsonData.articles)) {
+        return jsonData.articles;
+      }
+      // If the entire JSON is already an array, return it as is
+      if (Array.isArray(jsonData)) {
+        return jsonData;
+      }
+      // If it's a single object, wrap it in an array
+      if (typeof jsonData === 'object') {
+        return [jsonData];
+      }
+  
+      // Otherwise, log an error and return an empty array
+      console.error('Parsed data is neither an array nor an object.');
+      return [];
     } catch (error) {
       console.error('Failed to parse input JSON:', error);
       return [];
     }
   }
+  
 
   function flattenObject(ob: any, prefix = '', res: { [key: string]: string } = {}) {
     for (const key in ob) {
